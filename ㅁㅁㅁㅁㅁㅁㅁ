@@ -1,0 +1,25 @@
+function runPython() {
+  const output = document.getElementById("output");
+  const code = document.getElementById("code").value;
+  const runBtn = document.getElementById("runBtn");
+
+  output.textContent = "실행 중...\n";
+  runBtn.disabled = true;
+  runBtn.textContent = "실행 중...";
+
+  Sk.configure({
+    output: function(text) { output.textContent += text; },
+    read: builtinRead
+  });
+
+  Sk.misceval.asyncToPromise(() => Sk.importMainWithBody("<stdin>", false, code))
+    .then(() => {
+      runBtn.disabled = false;
+      runBtn.textContent = "실행";
+    })
+    .catch(err => {
+      output.textContent += "\n오류:\n" + err.toString();
+      runBtn.disabled = false;
+      runBtn.textContent = "실행";
+    });
+}
